@@ -1,9 +1,9 @@
 $ErrorActionPreference = "Stop"
 
-$targetFolder = "$([Environment]::GetFolderPath("Desktop"))\SolrCloud"
+$targetFolder = "c:\SolrCloud"
 
 Install-Module "7Zip4Powershell"
-Import-Module ".\Solr-Scripting-Helpers" -DisableNameChecking
+Import-Module ".\SolrCloud-Helpers" -DisableNameChecking
 
 Install-OpenJDK -targetFolder $targetFolder
 
