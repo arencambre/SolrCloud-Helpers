@@ -84,6 +84,9 @@ $solrData = @(
 All of the publicly exported script functions have help data. So `help Configure-ZooKeeperForSsl` (for example) will give you info about
 the behaviour and parameters.
 
+#Video
+<iframe width="560" height="315" src="https://www.youtube.com/embed/C7HZWmXeXdQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 ## Known issues
 
 * While the scripts should be able to install the latest v3.5.5 release of Zookeeper, this archive seems to cause an issue with the
