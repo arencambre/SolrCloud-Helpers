@@ -4,17 +4,29 @@ Remove-ZooKeeperInstances removes prior services created by NSSM. This is to
 clean up prior attempts before beginning a new setup.
 #>
 function Remove-ZooKeeperInstances {
-    # stop services
-    & "$targetFolder\nssm\nssm.exe" stop ZooKeeper-1
-    & "$targetFolder\nssm\nssm.exe" stop ZooKeeper-2
-    & "$targetFolder\nssm\nssm.exe" stop ZooKeeper-3
+    param(
+        $zkData,
+        $solrData
+    )
 
-    # remove services
-    & "$targetFolder\nssm\nssm.exe" remove ZooKeeper-1 confirm
-    & "$targetFolder\nssm\nssm.exe" remove ZooKeeper-2 confirm
-    & "$targetFolder\nssm\nssm.exe" remove ZooKeeper-3 confirm
+    # remove ZooKeeper instances
+    foreach($entry in $zkData) {
+        $instanceName = "ZooKeeper-" + $entry.InstanceID # create instance name
+        & "$targetFolder\nssm\nssm.exe" stop $instanceName # stop service
+        & "$targetFolder\nssm\nssm.exe" remove $instanceName confirm # remove service
+        Write-Host "Removing $instanceName files"
+        $path = $targetFolder + "\" + $entry.Folder
+        Remove-Item $path -Recurse
+    }
 
-    # remove files
-    Write-Host "Removing ZooKeeper files"
-    Remove-Item "$targetFolder\zk*" -Recurse
+    # remove Solr instances
+    foreach($entry in $solrData) {
+        $instanceName = "Solr-" + $entry.ClientPort # create instance name
+
+        & "$targetFolder\nssm\nssm.exe" stop $instanceName # stop service
+        & "$targetFolder\nssm\nssm.exe" remove $instanceName confirm # remove service
+        Write-Host "Removing $instanceName files"
+        $path = $targetFolder + "\" + $entry.Folder
+        Remove-Item $path -Recurse
+    }
 }

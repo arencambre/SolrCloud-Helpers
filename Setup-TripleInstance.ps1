@@ -36,7 +36,7 @@ Import-Module ".\SolrCloud-Helpers" -DisableNameChecking
 
 # first clean up potential remnants of prior attempts
 Import-Module ".\Remove-Services.ps1"
-Remove-ZooKeeperInstances
+Remove-ZooKeeperInstances $zkData $solrData
 
 $zkConnection = Make-ZookeeperConnection $zkData
 $zkEnsemble = Make-ZooKeeperEnsemble $zkData

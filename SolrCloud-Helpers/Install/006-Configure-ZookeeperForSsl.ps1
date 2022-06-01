@@ -12,6 +12,12 @@ function Setup-ZooKeeperForSsl
 	# It will fail if it can't find Java - and it appears to need the path environment set
 	# rather than the JAVA_HOME that the rest of Solr requires.
 	#
+    # Also, you will get an error when the batch file is called. It is due to 
+    # https://issues.apache.org/jira/browse/SOLR-15968. Possible workaround
+    # defined at https://stackoverflow.com/questions/71938048/solr-zookeeper-an-exception-was-thrown-while-closing-send-thread.
+    # Or just ignore it.
+    #
+    
     $zkCliTool = "$solrFolder\server\scripts\cloud-scripts\zkCli.bat"
     & $zkCliTool -zkhost $zkConnectionString -cmd clusterprop -name urlScheme -val https
 }
