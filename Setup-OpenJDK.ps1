@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$targetFolder = "c:\SolrCloud"
+$targetFolder = "e:\SolrCloud"
 
 Install-Module "7Zip4Powershell"
 Import-Module ".\SolrCloud-Helpers" -DisableNameChecking

@@ -4,12 +4,15 @@
 ## Config data
 ##
 
-$targetFolder = "$([Environment]::GetFolderPath("Desktop"))\SolrCloud"
+$targetFolder = "e:\SolrCloud"
 $installService = $false
 $collectionPrefix = "search"
 $solrPackage = "https://archive.apache.org/dist/lucene/solr/7.2.1/solr-7.2.1.zip" # For Sitecore v9.1
 #$solrPackage = "https://archive.apache.org/dist/lucene/solr/7.5.0/solr-7.5.0.zip" # For Sitecore v9.2
 #$solrPackage = "https://archive.apache.org/dist/lucene/solr/8.1.1/solr-8.1.1.zip" # For Sitecore V9.3
+#$solrPackage = "https://archive.apache.org/dist/lucene/solr/8.4.0/solr-8.4.0.zip" # For Sitecore v10.1
+$solrPackage = "https://archive.apache.org/dist/lucene/solr/8.8.2/solr-8.8.2.zip" # For Sitecore v10.2
+$zkPackage = "https://archive.apache.org/dist/zookeeper/zookeeper-3.6.2/apache-zookeeper-3.6.2.tar.gz"; # for Solr 8.8.2 (Sitecore 10.2)
 
 $zkData = @(
 	@{Host = "localhost"; Folder="zk"; InstanceID=1; ClientPort = 2971; EnsemblePorts="2981:2991"}
@@ -39,7 +42,7 @@ if($installService)
 
 foreach($instance in $zkData)
 {
-	Install-ZooKeeperInstance -targetFolder $targetFolder -zkFolder $instance.Folder -zkInstanceId $instance.InstanceID -zkEnsemble $zkEnsemble -zkClientPort $instance.ClientPort -installService $installService
+	Install-ZooKeeperInstance -targetFolder $targetFolder -zkPackage $zkPackage -zkFolder $instance.Folder -zkInstanceId $instance.InstanceID -zkEnsemble $zkEnsemble -zkClientPort $instance.ClientPort -installService $installService
 }
 
 foreach($instance in $zkData)

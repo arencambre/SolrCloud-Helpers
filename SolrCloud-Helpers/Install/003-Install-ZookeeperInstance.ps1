@@ -14,7 +14,7 @@ function Extract-ZooKeeper
 
         Expand-TarGz $zkArchive $workingFolder -BufferSize $(1024*1024)
 
-        $createdFolder = $workingFolder | Get-ChildItem -Filter "zookeeper*" | select -ExpandProperty FullName
+        $createdFolder = $workingFolder | Get-ChildItem -Filter "*zookeeper*" | select -ExpandProperty FullName
 
         Rename-Item $createdFolder $zkFolderName
     }
@@ -76,6 +76,7 @@ function Create-ZooKeeperConfig
 
         "dataDir=$zkDataFolder".Replace("\", "\\") | Out-File -FilePath $cfgFile -Encoding ascii -Append
         "clientPort=$zkPort" | Out-File -FilePath $cfgFile -Encoding ascii -Append
+        "4lw.commands.whitelist=mntr,conf,ruok" | Out-File -FilePath $cfgFile -Encoding ascii -Append
     
 		if(-not $singleInstance)
 		{

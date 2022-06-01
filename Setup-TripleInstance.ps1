@@ -4,14 +4,15 @@
 ## Config data
 ##
 
-$targetFolder = "c:\SolrCloud"
+$targetFolder = "e:\SolrCloud"
 $installService = $true
 $collectionPrefix = "search"
 #$solrPackage = "https://archive.apache.org/dist/lucene/solr/7.2.1/solr-7.2.1.zip" # For Sitecore v9.1
 #$solrPackage = "https://archive.apache.org/dist/lucene/solr/7.5.0/solr-7.5.0.zip" # For Sitecore v9.2
 #$solrPackage = "https://archive.apache.org/dist/lucene/solr/8.1.1/solr-8.1.1.zip" # For Sitecore V9.3
-$solrPackage = "https://archive.apache.org/dist/lucene/solr/8.4.0/solr-8.4.0.zip" # For Sitecore v10.1
-$zkPackage = "https://archive.apache.org/dist/zookeeper/zookeeper-3.4.14/zookeeper-3.4.14.tar.gz";
+#$solrPackage = "https://archive.apache.org/dist/lucene/solr/8.4.0/solr-8.4.0.zip" # For Sitecore v10.1
+$solrPackage = "https://archive.apache.org/dist/lucene/solr/8.8.2/solr-8.8.2.zip" # For Sitecore v10.2
+$zkPackage = "https://archive.apache.org/dist/zookeeper/zookeeper-3.6.2/apache-zookeeper-3.6.2-bin.tar.gz"; # for Solr 8.8.2
 
 
 $zkData = @(
@@ -32,6 +33,10 @@ $solrData = @(
 
 Install-Module "7Zip4Powershell"
 Import-Module ".\SolrCloud-Helpers" -DisableNameChecking
+
+# first clean up potential remnants of prior attempts
+Import-Module ".\Remove-Services.ps1"
+Remove-ZooKeeperInstances
 
 $zkConnection = Make-ZookeeperConnection $zkData
 $zkEnsemble = Make-ZooKeeperEnsemble $zkData
