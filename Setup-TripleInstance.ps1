@@ -27,15 +27,16 @@ $solrData = @(
 	@{Host = "solr3"; Folder = "SOLR3"; ClientPort = 9997 }
 )
 
+
 ##
 ## Install process
 ##
 
 Install-Module "7Zip4Powershell"
-Import-Module ".\SolrCloud-Helpers" -DisableNameChecking
+Import-Module ".\SolrCloud-Helpers" -DisableNameChecking -Force
 
 # first clean up potential remnants of prior attempts
-Import-Module ".\Remove-Services.ps1"
+Import-Module ".\Remove-Services.ps1" -Force
 Remove-ZooKeeperInstances $zkData $solrData
 
 $zkConnection = Make-ZookeeperConnection $zkData
@@ -68,7 +69,7 @@ foreach ($instance in $solrData) {
 	Install-SolrInstance -targetFolder $targetFolder -installService $installService -zkEnsembleConnectionString $zkConnection -solrFolderName $instance.Folder -solrHostname $instance.Host -solrClientPort $instance.ClientPort -certificateFile $certFile -certificatePassword $certPwd -solrPackage $solrPackage
 }
 
-Configure-ZooKeeperForSsl -targetFolder $targetFolder -zkConnection $zkConnection -solrFolderName $solrData[0].Folder
+#Configure-ZooKeeperForSsl -targetFolder $targetFolder -zkConnection $zkConnection -solrFolderName $solrData[0].Folder
 
 foreach ($instance in $solrData) {
 	Start-SolrInstance -solrClientPort $instance.ClientPort -installService $installService
@@ -78,4 +79,14 @@ foreach ($instance in $solrData) {
 	Wait-ForSolrToStart $instance.Host $instance.ClientPort
 }
 
-Configure-SolrCollection -targetFolder $targetFolder -replicas $solrData.Length -solrHostname $solrData[0].Host -solrClientPort $solrData[0].ClientPort -collectionPrefix $collectionPrefix
+
+# get first ZooKeeper and Solr instances
+$firstZk = $zkData | Select-Object -first 1
+$firstSolr = $solrData | Select-Object -first 1
+
+$zkUrlForConfigurationUpload = $firstZk.Host + ":" + $firstZk.ClientPort
+$solrFolder = $targetFolder + "\" + $firstSolr.Folder
+
+Set-SolrConfigForSitecore $solrFolder $zkUrlForConfigurationUpload
+
+#Configure-SolrCollection -targetFolder $targetFolder -replicas $solrData.Length -solrHostname $solrData[0].Host -solrClientPort $solrData[0].ClientPort -collectionPrefix $collectionPrefix

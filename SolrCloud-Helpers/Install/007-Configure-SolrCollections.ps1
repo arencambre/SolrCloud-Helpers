@@ -17,7 +17,7 @@ function Write-EmbeddedFile
       New-Item $folder -ItemType Directory | Out-Null
     }
  
-    Set-Content -Path $targetFile -Value $Content -Encoding Byte
+    Set-Content -Path $targetFile -Value $Content -AsByteStream
   }
 }
 
@@ -154,6 +154,7 @@ function Create-SolrCollection
         Write-Host "Creating collection $solrCollectionName with config $solrCollectionConfig"
 
         $url = "https://$($solrHost):$solrPort/solr/admin/collections?action=CREATE&name=$solrCollectionName&numShards=$shards&replicationFactor=$replicas&maxShardsPerNode=$shardsPerNode&collection.configName=$solrCollectionConfig"
+        Write-Host "Trying " + $url
         Invoke-WebRequest -UseBasicParsing -Uri $url | Out-Null
     }
     else

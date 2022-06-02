@@ -37,18 +37,18 @@ function Create-SolrConfig
         [string]$zkConnectionString
     )
 
-    # write config changes
+    # write config changes to start script
     if(!(Test-Path -Path "$solrFolder\bin\solr.in.cmd.old"))
     {
         Write-Host "Rewriting solr config for instance $solrInstance"
  
         $cfg = Get-Content "$solrFolder\bin\solr.in.cmd"
         Rename-Item "$solrFolder\bin\solr.in.cmd" "$solrFolder\bin\solr.in.cmd.old"
-        $newCfg = $cfg | % { $_ -replace "REM set SOLR_SSL_KEY_STORE=etc/solr-ssl.keystore.p12", "set SOLR_SSL_KEY_STORE=$certFile" }
-        $newCfg = $newCfg | % { $_ -replace "REM set SOLR_SSL_KEY_STORE_PASSWORD=secret", "set SOLR_SSL_KEY_STORE_PASSWORD=$certPassword" }
-        $newCfg = $newCfg | % { $_ -replace "REM set SOLR_SSL_TRUST_STORE=etc/solr-ssl.keystore.p12", "set SOLR_SSL_TRUST_STORE=$certFile" }
-        $newCfg = $newCfg | % { $_ -replace "REM set SOLR_SSL_TRUST_STORE_PASSWORD=secret", "set SOLR_SSL_TRUST_STORE_PASSWORD=$certPassword" }
-        $newCfg = $newCfg | % { $_ -replace "REM set SOLR_HOST=192.168.1.1", "set SOLR_HOST=$solrHost" }
+#        $newCfg = $cfg | % { $_ -replace "REM set SOLR_SSL_KEY_STORE=etc/solr-ssl.keystore.p12", "set SOLR_SSL_KEY_STORE=$certFile" }
+#        $newCfg = $newCfg | % { $_ -replace "REM set SOLR_SSL_KEY_STORE_PASSWORD=secret", "set SOLR_SSL_KEY_STORE_PASSWORD=$certPassword" }
+#        $newCfg = $newCfg | % { $_ -replace "REM set SOLR_SSL_TRUST_STORE=etc/solr-ssl.keystore.p12", "set SOLR_SSL_TRUST_STORE=$certFile" }
+#        $newCfg = $newCfg | % { $_ -replace "REM set SOLR_SSL_TRUST_STORE_PASSWORD=secret", "set SOLR_SSL_TRUST_STORE_PASSWORD=$certPassword" }
+        $newCfg = $cfg | % { $_ -replace "REM set SOLR_HOST=192.168.1.1", "set SOLR_HOST=$solrHost" }
         $newCfg = $newCfg | % { $_ -replace "REM set SOLR_PORT=8983", "set SOLR_PORT=$solrPort" }
         
 
@@ -57,8 +57,27 @@ function Create-SolrConfig
     }
     else
     {
-        Write-Host "No need to rewrite Solr config - already modified"
+        Write-Host "No need to rewrite solr.in.cmd - already modified"
     }
+}
+
+function Set-SolrConfigForSitecore
+{
+    param(
+        [string]$solrFolder,
+        [string]$zkUrlForConfigurationUpload
+    )
+
+    # this reflects a procedure at
+    # https://doc.sitecore.com/xp/en/developers/102/platform-administration-and-architecture/walkthrough--setting-up-solrcloud.html#upload-the-configuration-to-zookeeper_body
+
+    # copy sitecore configuration to one node
+    Copy-Item -Path '.\Solr config\*' -Destination "$solrFolder\server\solr\configsets\sitecore_configs\conf" -Recurse
+
+    # now upload that configuration to ZooKeeper
+    Push-Location $solrFolder
+    bin\solr zk upconfig -d sitecore_configs -n sitecore -z $zkUrlForConfigurationUpload
+    Pop-Location
 }
 
 function Configure-SolrService
@@ -252,7 +271,7 @@ function Wait-ForSolrToStart
     {
         try
         {
-            Invoke-WebRequest "https://$($solrHost):$($solrPort)/solr" -UseBasicParsing | Out-Null
+            Invoke-WebRequest "http://$($solrHost):$($solrPort)/solr" -UseBasicParsing | Out-Null
             $done = $true
         }
         catch
@@ -327,3 +346,4 @@ Export-ModuleMember -Function Start-SolrInstance
 Export-ModuleMember -Function Wait-ForSolrToStart
 Export-ModuleMember -Function Make-SolrHostList
 Export-ModuleMember -Function Make-SolrHostEntry
+Export-ModuleMember -Function Set-SolrConfigForSitecore
