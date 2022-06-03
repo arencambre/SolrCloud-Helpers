@@ -7,13 +7,8 @@
 $targetFolder = "e:\SolrCloud"
 $installService = $true
 $collectionPrefix = "search"
-#$solrPackage = "https://archive.apache.org/dist/lucene/solr/7.2.1/solr-7.2.1.zip" # For Sitecore v9.1
-#$solrPackage = "https://archive.apache.org/dist/lucene/solr/7.5.0/solr-7.5.0.zip" # For Sitecore v9.2
-#$solrPackage = "https://archive.apache.org/dist/lucene/solr/8.1.1/solr-8.1.1.zip" # For Sitecore V9.3
-#$solrPackage = "https://archive.apache.org/dist/lucene/solr/8.4.0/solr-8.4.0.zip" # For Sitecore v10.1
 $solrPackage = "https://archive.apache.org/dist/lucene/solr/8.8.2/solr-8.8.2.zip" # For Sitecore v10.2
 $zkPackage = "https://archive.apache.org/dist/zookeeper/zookeeper-3.6.2/apache-zookeeper-3.6.2-bin.tar.gz"; # for Solr 8.8.2
-
 
 $zkData = @(
 	@{Host = "localhost"; Folder = "zk1"; InstanceID = 1; ClientPort = 2971; EnsemblePorts = "2981:2991" },
@@ -45,7 +40,7 @@ $zkEnsemble = Make-ZooKeeperEnsemble $zkData
 $solrHostNames = Make-SolrHostList $solrData
 $solrHostEntry = Make-SolrHostEntry "127.0.0.1" $solrData
 
-if ($installService) {
+if($installService) {
 	Install-NSSM -targetFolder $targetFolder
 }
 
@@ -88,5 +83,10 @@ $zkUrlForConfigurationUpload = $firstZk.Host + ":" + $firstZk.ClientPort
 $solrFolder = $targetFolder + "\" + $firstSolr.Folder
 
 Set-SolrConfigForSitecore $solrFolder $zkUrlForConfigurationUpload
+
+# add firewall allow rules
+Add-FirewallAllowRule $solrData[0].ClientPort $zkData[0].ClientPort
+Add-FirewallAllowRule $solrData[1].ClientPort $zkData[1].ClientPort
+Add-FirewallAllowRule $solrData[2].ClientPort $zkData[2].ClientPort
 
 #Configure-SolrCollection -targetFolder $targetFolder -replicas $solrData.Length -solrHostname $solrData[0].Host -solrClientPort $solrData[0].ClientPort -collectionPrefix $collectionPrefix

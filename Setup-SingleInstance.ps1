@@ -5,21 +5,17 @@
 ##
 
 $targetFolder = "e:\SolrCloud"
-$installService = $false
+$installService = $true
 $collectionPrefix = "search"
-$solrPackage = "https://archive.apache.org/dist/lucene/solr/7.2.1/solr-7.2.1.zip" # For Sitecore v9.1
-#$solrPackage = "https://archive.apache.org/dist/lucene/solr/7.5.0/solr-7.5.0.zip" # For Sitecore v9.2
-#$solrPackage = "https://archive.apache.org/dist/lucene/solr/8.1.1/solr-8.1.1.zip" # For Sitecore V9.3
-#$solrPackage = "https://archive.apache.org/dist/lucene/solr/8.4.0/solr-8.4.0.zip" # For Sitecore v10.1
 $solrPackage = "https://archive.apache.org/dist/lucene/solr/8.8.2/solr-8.8.2.zip" # For Sitecore v10.2
-$zkPackage = "https://archive.apache.org/dist/zookeeper/zookeeper-3.6.2/apache-zookeeper-3.6.2.tar.gz"; # for Solr 8.8.2 (Sitecore 10.2)
+$zkPackage = "https://archive.apache.org/dist/zookeeper/zookeeper-3.6.2/apache-zookeeper-3.6.2-bin.tar.gz"; # for Solr 8.8.2
 
 $zkData = @(
 	@{Host = "localhost"; Folder="zk"; InstanceID=1; ClientPort = 2971; EnsemblePorts="2981:2991"}
 )
 
 $solrData = @(
-	@{Host="solr"; Folder="SOLR"; ClientPort=9999}
+	@{Host="solr"; Folder="SOLR"; ClientPort=8983}
 )
 
 ##
@@ -28,6 +24,10 @@ $solrData = @(
 
 Install-Module "7Zip4Powershell"
 Import-Module ".\SolrCloud-Helpers" -DisableNameChecking
+
+# first clean up potential remnants of prior attempts
+Import-Module ".\Remove-Services.ps1" -Force
+Remove-ZooKeeperInstances $zkData $solrData
 
 $zkConnection = Make-ZookeeperConnection $zkData
 $zkEnsemble = Make-ZooKeeperEnsemble $zkData
@@ -64,7 +64,7 @@ foreach($instance in $solrData)
 	Install-SolrInstance -targetFolder $targetFolder -installService $installService -zkEnsembleConnectionString $zkConnection -solrFolderName $instance.Folder -solrHostname $instance.Host -solrClientPort $instance.ClientPort -certificateFile $certFile -certificatePassword $certPwd -solrPackage $solrPackage
 }
 
-Configure-ZooKeeperForSsl -targetFolder $targetFolder -zkConnection $zkConnection -solrFolderName $solrData[0].Folder
+#Configure-ZooKeeperForSsl -targetFolder $targetFolder -zkConnection $zkConnection -solrFolderName $solrData[0].Folder
 
 foreach($instance in $solrData)
 {
@@ -76,4 +76,6 @@ foreach($instance in $solrData)
 	Wait-ForSolrToStart $instance.Host $instance.ClientPort
 }
 
-Configure-SolrCollection -targetFolder $targetFolder -replicas $solrData.Length -solrHostname $solrData[0].Host -solrClientPort $solrData[0].ClientPort -collectionPrefix $collectionPrefix
+Add-FirewallAllowRule $solrData[0].ClientPort $zkData[0].ClientPort
+
+#Configure-SolrCollection -targetFolder $targetFolder -replicas $solrData.Length -solrHostname $solrData[0].Host -solrClientPort $solrData[0].ClientPort -collectionPrefix $collectionPrefix
