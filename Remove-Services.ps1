@@ -15,7 +15,7 @@ function Remove-ZooKeeperInstances {
         & "$targetFolder\nssm\nssm.exe" stop $instanceName # stop service
         & "$targetFolder\nssm\nssm.exe" remove $instanceName confirm # remove service
         Write-Host "Removing $instanceName files"
-        $path = $targetFolder + "\" + $entry.Folder
+        $path = $targetFolder + "\" + $entry.Folder + "\"
         Remove-Item $path -Recurse
     }
 
