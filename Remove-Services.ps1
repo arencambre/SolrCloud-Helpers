@@ -29,4 +29,6 @@ function Remove-ZooKeeperInstances {
         $path = $targetFolder + "\" + $entry.Folder
         Remove-Item $path -Recurse
     }
+
+    Remove-FirewallAllowRules
 }

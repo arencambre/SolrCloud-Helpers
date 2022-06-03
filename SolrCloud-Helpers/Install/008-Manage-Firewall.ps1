@@ -8,6 +8,9 @@ Function Add-FirewallAllowRule {
     New-NetFirewallRule -DisplayName $displayName -Direction Inbound -Action Allow -EdgeTraversalPolicy Allow -Protocol TCP -LocalPort $solrPort,$zooKeeperPort
 }
 
-Function Remove-FirewallAllowRule {
+Function Remove-FirewallAllowRules {
     Get-NetFirewallRule | Where-Object DisplayName -Like "*Solr*" | Remove-NetFirewallRule
 }
+
+Export-ModuleMember -Function Add-FirewallAllowRule
+Export-ModuleMember -Function Remove-FirewallAllowRules
