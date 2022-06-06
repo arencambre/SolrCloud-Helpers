@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# project-specific files
+solr_config.json
+zookeeper_config.json
+
 # User-specific files
 *.rsuser
 *.suo

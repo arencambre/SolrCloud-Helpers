@@ -265,13 +265,15 @@ function Wait-ForSolrToStart
         [int]$solrPort
     )
 
-	Write-Host "Waiting for Solr to start on https://$($solrHost):$solrPort"
+    $urlToCheck = "http://$($solrHost):$($solrPort)/solr"
+
+	Write-Host "Waiting for Solr to start on $urlToCheck"
     $done = $false
     while(!$done)
     {
         try
         {
-            Invoke-WebRequest "http://$($solrHost):$($solrPort)/solr" -UseBasicParsing | Out-Null
+            Invoke-WebRequest $urlToCheck -UseBasicParsing | Out-Null
             $done = $true
         }
         catch

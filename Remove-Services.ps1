@@ -16,7 +16,7 @@ function Remove-ZooKeeperInstances {
         & "$targetFolder\nssm\nssm.exe" remove $instanceName confirm # remove service
         Write-Host "Removing $instanceName files"
         $path = $targetFolder + "\" + $entry.Folder + "\"
-        Remove-Item $path -Recurse
+        Remove-Item $path -Recurse -ErrorAction Ignore
     }
 
     # remove Solr instances
@@ -27,7 +27,7 @@ function Remove-ZooKeeperInstances {
         & "$targetFolder\nssm\nssm.exe" remove $instanceName confirm # remove service
         Write-Host "Removing $instanceName files"
         $path = $targetFolder + "\" + $entry.Folder
-        Remove-Item $path -Recurse
+        Remove-Item $path -Recurse -ErrorAction Ignore
     }
 
     Remove-FirewallAllowRules

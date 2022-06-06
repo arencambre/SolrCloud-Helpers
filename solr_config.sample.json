@@ -1,0 +1,17 @@
+[
+  {
+    "Host": "solr1",
+    "Folder": "solr1",
+    "ClientPort": 9999
+  },
+  {
+    "Host": "solr2",
+    "Folder": "solr2",
+    "ClientPort": 9998
+  },
+  {
+    "Host": "solr3",
+    "Folder": "solr3",
+    "ClientPort": 9997
+  }
+]
