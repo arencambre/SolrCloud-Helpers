@@ -28,6 +28,12 @@ $solrInstance = $solrData[$instance-1]
 Install-Module "7Zip4Powershell"
 Import-Module ".\SolrCloud-Helpers" -DisableNameChecking
 
+# get NSSM present as it's used in Remove-ZooKeeperInstances
+if($installService)
+{
+	Install-NSSM -targetFolder $targetFolder
+}
+
 # first clean up potential remnants of prior attempts
 Import-Module ".\Remove-Services.ps1" -Force
 Remove-ZooKeeperInstances $zkData $solrData
@@ -37,11 +43,6 @@ $zkEnsemble = Make-ZooKeeperEnsemble $zkData
 
 $solrHostNames = Make-SolrHostList $solrData
 $solrHostEntry = Make-SolrHostEntry "127.0.0.1" $solrData
-
-if($installService)
-{
-	Install-NSSM -targetFolder $targetFolder
-}
 
 Add-FirewallAllowRule $solrInstance.ClientPort $zkInstance.ClientPort
 
