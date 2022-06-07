@@ -1,23 +1,26 @@
 [
   {
-    "EnsemblePorts": "2981:2991",
     "Host": "localhost",
     "Folder": "zk1",
     "InstanceID": 1,
-    "ClientPort": 2971
+    "ClientPort": 2971,
+    "PeerPort": 2981,
+    "ElectionPort": 2991
   },
   {
-    "EnsemblePorts": "2982:2992",
     "Host": "localhost",
     "Folder": "zk2",
     "InstanceID": 2,
-    "ClientPort": 2972
+    "ClientPort": 2972,
+    "PeerPort": 2982,
+    "ElectionPort": 2992
   },
   {
-    "EnsemblePorts": "2983:2993",
     "Host": "localhost",
     "Folder": "zk3",
     "InstanceID": 3,
-    "ClientPort": 2973
+    "ClientPort": 2973,
+    "PeerPort": 2983,
+    "ElectionPort": 2993
   }
 ]
