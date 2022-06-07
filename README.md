@@ -4,6 +4,11 @@
 
 This automates setting up SolrCloud clusters on Windows. It helps with developer and production instances.
 
+## What this does not do
+
+* **Use SSL.** Due to some special requirements at my workplace, I have temporarily commented out all functionality that implements SSL. I may add it back at some point.
+* **Set up initial collections.** While there is code in here that used to do that, it appears to have been designed for a prior release of Solr. It does not play nicely with Solr 8.8.2. For now, I am using Sitecore's **solr-init** container to create initial collections.
+
 ## Using the scripts
 
 General procedure:
