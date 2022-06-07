@@ -10,18 +10,7 @@ $collectionPrefix = "search"
 $solrPackage = "https://archive.apache.org/dist/lucene/solr/8.8.2/solr-8.8.2.zip" # For Sitecore v10.2
 $zkPackage = "https://archive.apache.org/dist/zookeeper/zookeeper-3.6.2/apache-zookeeper-3.6.2-bin.tar.gz"; # for Solr 8.8.2
 
-$zkData = @(
-	@{Host = "localhost"; Folder = "zk1"; InstanceID = 1; ClientPort = 2971; EnsemblePorts = "2981:2991" },
-	@{Host = "localhost"; Folder = "zk2"; InstanceID = 2; ClientPort = 2972; EnsemblePorts = "2982:2992" },
-	@{Host = "localhost"; Folder = "zk3"; InstanceID = 3; ClientPort = 2973; EnsemblePorts = "2983:2993" }
-)
-
-$solrData = @(
-	@{Host = "solr1"; Folder = "SOLR1"; ClientPort = 9999 },
-	@{Host = "solr2"; Folder = "SOLR2"; ClientPort = 9998 },
-	@{Host = "solr3"; Folder = "SOLR3"; ClientPort = 9997 }
-)
-
+Invoke-Expression -Command ".\Setup-Configuration.ps1"
 
 ##
 ## Install process
@@ -31,7 +20,7 @@ Install-Module "7Zip4Powershell"
 Import-Module ".\SolrCloud-Helpers" -DisableNameChecking -Force
 
 # first clean up potential remnants of prior attempts
-Import-Module ".\Remove-Services.ps1" -Force
+Invoke-Expression -Command ".\Remove-Services.ps1"
 Remove-ZooKeeperInstances $zkData $solrData
 
 $zkConnection = Make-ZookeeperConnection $zkData

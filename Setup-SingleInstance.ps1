@@ -44,7 +44,7 @@ $zkEnsemble = Make-ZooKeeperEnsemble $zkData
 $solrHostNames = Make-SolrHostList $solrData
 $solrHostEntry = Make-SolrHostEntry "127.0.0.1" $solrData
 
-Add-FirewallAllowRule $solrInstance.ClientPort $zkInstance.ClientPort
+Add-FirewallAllowRule $solrInstance.ClientPort $zkInstance.ClientPort $zkInstance.PeerPort $zkInstance.ElectionPort
 
 Install-ZooKeeperInstance -targetFolder $targetFolder -zkPackage $zkPackage -zkFolder $zkInstance.Folder -zkInstanceId $zkInstance.InstanceID -zkEnsemble $zkEnsemble -zkClientPort $zkInstance.ClientPort -installService $installService
 
@@ -63,5 +63,10 @@ Install-SolrInstance -targetFolder $targetFolder -installService $installService
 Start-SolrInstance -solrClientPort $solrInstance.ClientPort -installService $installService
 
 Wait-ForSolrToStart $solrInstance.Host $solrInstance.ClientPort
+
+$zkUrlForConfigurationUpload = $zkInstance.Host + ":" + $zkInstance.ClientPort
+$solrFolder = $targetFolder + "\" + $solrInstance.Folder
+
+Set-SolrConfigForSitecore $solrFolder $zkUrlForConfigurationUpload
 
 #Configure-SolrCollection -targetFolder $targetFolder -replicas $solrData.Length -solrHostname $solrData[0].Host -solrClientPort $solrData[0].ClientPort -collectionPrefix $collectionPrefix

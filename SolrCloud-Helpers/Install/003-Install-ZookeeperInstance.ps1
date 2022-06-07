@@ -301,7 +301,7 @@ function Make-ZooKeeperEnsemble
 
     foreach($entry in $zkData)
     {
-        $result += $entry.Host + ":" + $entry.EnsemblePorts
+        $result += $entry.Host + ":" + $entry.PeerPort + ":" + $entry.ElectionPort
     }
 
     return $result;
